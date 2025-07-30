@@ -52,3 +52,16 @@ README.txt
 
 # Test files
 test-simple.js
+
+# Development and example files
+examples/
+.vscode/
+.kiro/
+
+# Archive files
+*.tar
+*.tar.gz
+*.zip
+
+# Duplicate database files
+prisma/db/
