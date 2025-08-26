@@ -5,8 +5,10 @@ import { Server } from 'socket.io';
 import next from 'next';
 
 const dev = process.env.NODE_ENV !== 'production';
-const currentPort = 3000;
-const hostname = 'localhost';
+const port = parseInt(process.env.PORT || '3000', 10);
+const hostname = process.env.HOSTNAME || 'localhost';
+const corsOrigin = process.env.CORS_ORIGIN || `http://${hostname}:${port}`;
+
 
 // Custom server with Socket.IO integration
 async function createCustomServer() {
@@ -14,9 +16,7 @@ async function createCustomServer() {
     // Create Next.js app
     const nextApp = next({
       dev,
-      dir: process.cwd(),
-      // In production, use the current directory where .next is located
-      conf: dev ? undefined : { distDir: './.next' }
+      dir: process.cwd()
     });
 
     await nextApp.prepare();
@@ -35,7 +35,7 @@ async function createCustomServer() {
     const io = new Server(server, {
       path: '/api/socketio',
       cors: {
-        origin: "*",
+        origin: corsOrigin,
         methods: ["GET", "POST"]
       }
     });
@@ -43,9 +43,9 @@ async function createCustomServer() {
     setupSocket(io);
 
     // Start the server
-    server.listen(currentPort, hostname, () => {
-      console.log(`> Ready on http://${hostname}:${currentPort}`);
-      console.log(`> Socket.IO server running at ws://${hostname}:${currentPort}/api/socketio`);
+    server.listen(port, hostname, () => {
+      console.log(`> Ready on http://${hostname}:${port}`);
+      console.log(`> Socket.IO server running at ws://${hostname}:${port}/api/socketio`);
     });
 
   } catch (err) {
